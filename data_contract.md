@@ -205,10 +205,11 @@ Member 1 guarantees the following Service Level Agreements (SLAs) for every file
 
 ### For Member 2 (Data Cleaning & Transformation):
 - Ingest files by iterating over `raw_data/*/*.json`.
-- Extract `data["metadata"]` to enrich the DataFrame with `city_name` and `extracted_at`.
+- Extract `data["metadata"]` to enrich the DataFrame with `city_name`, `city_key`, and `extracted_at_utc`.
 - Convert `data["original_api_response"]["hourly"]` directly into a `pandas.DataFrame(hourly)`.
-- Parse `time` as `datetime64[ns, UTC]`.
+- Parse timestamps explicitly using `pd.to_datetime(hourly["time"], utc=True)`.
 - Inspect and handle any upstream `null` values in sensor fields (temperature, humidity, precipitation, wind speed, weather code) according to project cleaning rules.
+- **Multiple extraction snapshots:** A city folder may contain multiple files for the same requested date range. Do not concatenate these files blindly. Treat them as separate extraction snapshots, compare `metadata.extracted_at_utc` and their hourly payloads, then select the intended snapshot or apply a documented deduplication policy using `(city_key, time)`. Preserve extraction lineage and do not delete source files during this process.
 
 ### For Member 3 (PostgreSQL Database Schema & Ingestion):
 - Proposed staging table schema:

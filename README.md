@@ -1,4 +1,4 @@
-# Weather Data Pipeline with Python and PostgreSQL
+﻿# Weather Data Pipeline with Python and PostgreSQL
 
 An enterprise-grade, modular Data Engineering pipeline built with Python and PostgreSQL. The complete project scope encompasses historical weather data extraction across five major Egyptian cities, automated data cleansing, persistence into a relational database, SQL analytics, and workflow orchestration.
 
@@ -20,7 +20,6 @@ This repository is developed by a 6-member engineering team. Each member owns a 
 | **Member 6** | Containerization & DevOps | Docker Compose, environment management, CI/CD pipeline |
 
 ---
-
 ## 🏛️ Architecture Overview — Extraction Layer
 
 The extraction layer acts as the ingestion backbone, interfacing directly with the Open-Meteo Historical Archive API:
@@ -164,7 +163,7 @@ pytest -v tests/test_storage.py
 
 ### Expected Test Results:
 ```text
-============================= 28 passed in 1.04s ==============================
+============================= 28 passed ==============================
 ```
 
 ---
