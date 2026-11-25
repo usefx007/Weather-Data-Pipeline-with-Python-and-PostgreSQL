@@ -21,10 +21,10 @@ All downstream consumers (**Member 2** for Pandas transformation and **Member 3*
 ## 2. Storage & Directory Conventions
 
 ### 2.1 File Path Structure
-Raw weather files are organized per city in dedicated directories under `raw_data/`:
+Raw weather files are organized per city in dedicated directories under `Member 1 — Data Extraction/raw_data/`:
 
 ```text
-raw_data/
+Member 1 — Data Extraction/raw_data/
 ├── alexandria/
 │   └── weather_alexandria_YYYY-MM-DD_YYYY-MM-DD_YYYYMMDD_HHMMSS_microseconds_uuid8.json
 ├── aswan/
@@ -180,7 +180,7 @@ Member 2 (Pandas Cleaning) and Member 3 (PostgreSQL) should use this mapping tab
 
 ## 6. Guarantees & Handover SLA
 
-Member 1 guarantees the following Service Level Agreements (SLAs) for every file produced and saved in `raw_data/`:
+Member 1 guarantees the following Service Level Agreements (SLAs) for every file produced and saved in `Member 1 — Data Extraction/raw_data/`:
 
 1. **Parallel Array Length Guarantee:**
    - For every successfully saved file, `len(hourly["time"]) == len(hourly[variable])` for all hourly variables.
@@ -204,7 +204,7 @@ Member 1 guarantees the following Service Level Agreements (SLAs) for every file
 ## 7. Instructions for Downstream Consumers
 
 ### For Member 2 (Data Cleaning & Transformation):
-- Ingest files by iterating over `raw_data/*/*.json`.
+- Ingest files by iterating over `Member 1 — Data Extraction/raw_data/*/*.json`.
 - Extract `data["metadata"]` to enrich the DataFrame with `city_name`, `city_key`, and `extracted_at_utc`.
 - Convert `data["original_api_response"]["hourly"]` directly into a `pandas.DataFrame(hourly)`.
 - Parse timestamps explicitly using `pd.to_datetime(hourly["time"], utc=True)`.
