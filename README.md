@@ -1,8 +1,8 @@
 # Weather Data Pipeline with Python and PostgreSQL
 
-An enterprise-grade, modular Data Engineering pipeline built with Python and PostgreSQL. The complete project scope encompasses historical weather data extraction across five major Egyptian cities, automated data cleansing, persistence into a relational database, SQL analytics, and workflow orchestration.
+A team-based Weather Data Engineering project using Python, with PostgreSQL planned for a later stage. The currently implemented milestone focuses on extracting historical weather data for five Egyptian cities, validating API responses, and storing the raw results as structured JSON files. The broader team plan includes data cleaning, database ingestion, SQL analytics, workflow orchestration, and containerization.
 
-> **Project Milestone Scope:** This repository milestone delivers the foundation of the pipeline: **Member 1 — Data Extraction Layer (Backend)**. Subsequent stages (Data Cleaning, PostgreSQL Ingestion, SQL Analytics, Airflow Orchestration, and Docker containerization) represent the broader team workflow to be built upon this extraction layer.
+> **Current Implementation:** The completed and documented implementation in this repository is **Member 1 — Data Extraction**. The other stages listed below are planned team work and should not be interpreted as completed functionality.
 
 ---
 
@@ -10,14 +10,14 @@ An enterprise-grade, modular Data Engineering pipeline built with Python and Pos
 
 This repository is developed by a 6-member engineering team. Each member owns a distinct stage of the data engineering lifecycle:
 
-| Member | Focus Area | Deliverables / Status |
-|---|---|---|
-| **Member 1 (Current)** | **Data Extraction (Backend)** | `Member 1 — Data Extraction/`: extraction code, configuration, raw JSON data, and automated tests (**Completed**) |
-| **Member 2** | Data Cleaning & Transformation | Pandas cleansing, outlier treatment, missing value imputation |
-| **Member 3** | Database Design & Ingestion | PostgreSQL schema, DDL scripts, batch ingestion engine |
-| **Member 4** | Advanced SQL & Analytics | Aggregations, monthly metrics, temperature anomalies |
-| **Member 5** | Workflow Orchestration | Apache Airflow DAGs, automated scheduling, SLA alerting |
-| **Member 6** | Containerization & DevOps | Docker Compose, environment management, CI/CD pipeline |
+| Member | Focus Area | Deliverables | Status |
+|---|---|---|---|
+| **Member 1 (Current)** | **Data Extraction (Backend)** | `Member 1 — Data Extraction/`: extraction code, configuration, raw JSON data, and automated tests | **Implemented** |
+| **Member 2** | Data Cleaning & Transformation | Pandas cleansing, outlier treatment, missing value imputation | **Planned** |
+| **Member 3** | Database Design & Ingestion | PostgreSQL schema, DDL scripts, batch ingestion engine | **Planned** |
+| **Member 4** | Advanced SQL & Analytics | Aggregations, monthly metrics, temperature anomalies | **Planned** |
+| **Member 5** | Workflow Orchestration | Apache Airflow DAGs, automated scheduling, SLA alerting | **Planned** |
+| **Member 6** | Containerization & DevOps | Docker Compose, environment management, CI/CD pipeline | **Planned** |
 
 ---
 
@@ -28,7 +28,7 @@ The extraction layer acts as the ingestion backbone, interfacing directly with t
 ```mermaid
 flowchart TD
     subgraph Upstream ["Upstream API"]
-        API["Open-Meteo Historical Archive API<br/>(ERA5 Reanalysis Data)"]
+        API["Open-Meteo Historical Archive API<br/>(Historical Weather Data)"]
     end
 
     subgraph Member1 ["Member 1: Data Extraction Layer"]
@@ -53,16 +53,16 @@ flowchart TD
 
 ## 🚀 Key Features of the Extraction Engine
 
-- **Open-Meteo Archive API Integration:** Historical meteorological data based on ECMWF ERA5 reanalysis without API key dependencies or harsh throttling.
-- **Dynamic 30-Day Window with Availability Buffer:** Automatically computes the historical range using `AVAILABILITY_BUFFER_DAYS = 5` to account for ERA5 publication lag and minimize unavailable date requests.
-- **Production-Grade Resilience:**
+- **Open-Meteo Archive API Integration:** Retrieves historical weather data from the Open-Meteo Archive API without requiring an API key.
+- **Dynamic 30-Day Window with Availability Buffer:** Computes an inclusive 30-day historical range ending five days before the reference date (UTC), using `AVAILABILITY_BUFFER_DAYS = 5`.
+- **Request Resilience:**
   - **HTTP 429 Handling:** Parses `Retry-After` headers in both numeric seconds and RFC 7231 HTTP-date formats.
   - **Exponential Backoff:** Retries transient server errors (`500, 502, 503, 504`) and connection timeouts with configurable backoff factor (`initial=1.0s`, `factor=2.0`).
   - **Fail-Fast on Client Errors:** Immediate termination without retries on `4xx` client errors (e.g., `400, 404`).
   - **City Failure Isolation:** Each city is processed in isolation. An extraction or validation failure in one city logs an error but does not abort processing for other cities.
 - **Structural Validation:** Enforces parallel array length constraints across all hourly variables (`time`, `temperature_2m`, `relative_humidity_2m`, `precipitation`, `wind_speed_10m`, `weather_code`).
 - **Atomic File Storage:** All raw data files are written to temporary files (`.tmp_*`) first and atomically replaced on disk. In case of I/O failure, temporary files are cleanly unlinked, preventing partial or corrupt files.
-- **Comprehensive Automated Testing:** 28 deterministic unit tests verifying failure scenarios without relying on network access or system clock drift.
+- **Automated Testing:** 28 unit tests covering extraction retry behavior, storage behavior, and payload validation. The tests use mocks and are designed to run without live API requests.
 
 ---
 
