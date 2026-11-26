@@ -1,20 +1,22 @@
-# Data Contract: Weather Data Pipeline — Extraction Layer (Member 1)
+# Data Contract: Weather Data Pipeline — Extraction Layer (Mohamed Mahmoud)
 
 **Version:** 1.0.1  
 **Effective Date:** 2026-11-25  
-**Data Producer:** Member 1 — Data Extraction (Backend)  
+**Data Producer:** Mohamed Mahmoud — Data Extraction (Backend)
 **Data Consumers:**  
-- **Member 2 — Data Cleaning & Transformation (Pandas / ETL)**  
-- **Member 3 — Database Schema & Ingestion (PostgreSQL)**  
-- **Member 4, 5, 6 — SQL Analytics, Orchestration (Airflow), & Containerization (Docker)**
+- **Seif Moataz — Data Cleaning & Transformation (Pandas / ETL)**
+- **Youssef Ali — Database Schema & Ingestion (PostgreSQL)**
+- **Bedeir Abdelhamid — Advanced SQL & Analytics**
+- **Mohamed Mosad — Workflow Orchestration (Apache Airflow)**
+- **Ibrahim Mohamed — Containerization & DevOps (Docker)**
 
 ---
 
 ## 1. Executive Summary & Purpose
 
-This contract formally defines the schema, storage conventions, data types, validation guarantees, and handling policies for the raw historical weather datasets produced by **Member 1 (Data Extraction)**.
+This contract formally defines the schema, storage conventions, data types, validation guarantees, and handling policies for the raw historical weather datasets produced by **Mohamed Mahmoud (Data Extraction)**.
 
-All downstream consumers (**Member 2** for Pandas transformation and **Member 3** for PostgreSQL staging) must build their pipelines against this specification. Any breaking schema change requires a major version bump in this contract.
+All downstream consumers (**Seif Moataz** for Pandas transformation and **Youssef Ali** for PostgreSQL staging) must build their pipelines against this specification. Any breaking schema change requires a major version bump in this contract.
 
 ---
 
@@ -158,7 +160,7 @@ All arrays inside `hourly` are **parallel** and contain exactly the same number 
 
 ## 5. Reference: WMO Weather Interpretation Codes
 
-Member 2 (Pandas Cleaning) and Member 3 (PostgreSQL) should use this mapping table when transforming `weather_code`:
+Seif Moataz (Pandas Cleaning) and Youssef Ali (PostgreSQL) should use this mapping table when transforming `weather_code`:
 
 | Code Range | Meaning | Description |
 |---|---|---|
@@ -180,14 +182,14 @@ Member 2 (Pandas Cleaning) and Member 3 (PostgreSQL) should use this mapping tab
 
 ## 6. Guarantees & Handover SLA
 
-Member 1 guarantees the following Service Level Agreements (SLAs) for every file produced and saved in `Member 1 — Data Extraction/raw_data/`:
+Mohamed Mahmoud guarantees the following Service Level Agreements (SLAs) for every file produced and saved in `Member 1 — Data Extraction/raw_data/`:
 
 1. **Parallel Array Length Guarantee:**
    - For every successfully saved file, `len(hourly["time"]) == len(hourly[variable])` for all hourly variables.
    - Any API response where array lengths mismatch is rejected by the validator and aborted before writing to disk.
 2. **Missing Value Preservation Policy:**
-   - Member 1 **never drops, filters, or artificially imputes** missing or `null` values.
-   - Legitimate upstream `null` values are strictly preserved as JSON `null` so that Member 2 can implement appropriate domain-specific data cleaning (e.g., forward-fill, interpolation, or sentinel flagging).
+   - Mohamed Mahmoud **never drops, filters, or artificially imputes** missing or `null` values.
+   - Legitimate upstream `null` values are strictly preserved as JSON `null` so that Seif Moataz can implement appropriate domain-specific data cleaning (e.g., forward-fill, interpolation, or sentinel flagging).
 3. **Availability Buffer Implementation:**
    - Extraction incorporates a 5-day availability buffer (`AVAILABILITY_BUFFER_DAYS = 5`) to account for the publishing and finalization delay of ECMWF ERA5 reanalysis data.
    - **Note:** This buffer aims to avoid requesting unavailable dates from the archive, but does *not* constitute a guarantee that upstream meteorological sensors will never report missing or `null` readings.
@@ -203,7 +205,7 @@ Member 1 guarantees the following Service Level Agreements (SLAs) for every file
 
 ## 7. Instructions for Downstream Consumers
 
-### For Member 2 (Data Cleaning & Transformation):
+### For Seif Moataz (Data Cleaning & Transformation):
 - Ingest files by iterating over `Member 1 — Data Extraction/raw_data/*/*.json`.
 - Extract `data["metadata"]` to enrich the DataFrame with `city_name`, `city_key`, and `extracted_at_utc`.
 - Convert `data["original_api_response"]["hourly"]` directly into a `pandas.DataFrame(hourly)`.
@@ -211,7 +213,7 @@ Member 1 guarantees the following Service Level Agreements (SLAs) for every file
 - Inspect and handle any upstream `null` values in sensor fields (temperature, humidity, precipitation, wind speed, weather code) according to project cleaning rules.
 - **Multiple extraction snapshots:** A city folder may contain multiple files for the same requested date range. Do not concatenate these files blindly. Treat them as separate extraction snapshots, compare `metadata.extracted_at_utc` and their hourly payloads, then select the intended snapshot or apply a documented deduplication policy using `(city_key, time)`. Preserve extraction lineage and do not delete source files during this process.
 
-### For Member 3 (PostgreSQL Database Schema & Ingestion):
+### For Youssef Ali (PostgreSQL Database Schema & Ingestion):
 - Proposed staging table schema:
   ```sql
   CREATE TABLE staging_raw_weather (

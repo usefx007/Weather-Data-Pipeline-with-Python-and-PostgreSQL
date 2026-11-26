@@ -2,7 +2,7 @@
 
 A team-based Weather Data Engineering project using Python, with PostgreSQL planned for a later stage. The currently implemented milestone focuses on extracting historical weather data for five Egyptian cities, validating API responses, and storing the raw results as structured JSON files. The broader team plan includes data cleaning, database ingestion, SQL analytics, workflow orchestration, and containerization.
 
-> **Current Implementation:** The completed and documented implementation in this repository is **Member 1 — Data Extraction**. The other stages listed below are planned team work and should not be interpreted as completed functionality.
+> **Current Implementation:** The completed and documented implementation in this repository is **Mohamed Mahmoud — Data Extraction**. The other stages listed below are planned team work and should not be interpreted as completed functionality.
 
 ---
 
@@ -10,14 +10,14 @@ A team-based Weather Data Engineering project using Python, with PostgreSQL plan
 
 This repository is developed by a 6-member engineering team. Each member owns a distinct stage of the data engineering lifecycle:
 
-| Member | Focus Area | Deliverables | Status |
+| Team Member | Focus Area | Deliverables | Status |
 |---|---|---|---|
-| **Member 1 (Current)** | **Data Extraction (Backend)** | `Member 1 — Data Extraction/`: extraction code, configuration, raw JSON data, and automated tests | **Implemented** |
-| **Member 2** | Data Cleaning & Transformation | Pandas cleansing, outlier treatment, missing value imputation | **Planned** |
-| **Member 3** | Database Design & Ingestion | PostgreSQL schema, DDL scripts, batch ingestion engine | **Planned** |
-| **Member 4** | Advanced SQL & Analytics | Aggregations, monthly metrics, temperature anomalies | **Planned** |
-| **Member 5** | Workflow Orchestration | Apache Airflow DAGs, automated scheduling, SLA alerting | **Planned** |
-| **Member 6** | Containerization & DevOps | Docker Compose, environment management, CI/CD pipeline | **Planned** |
+| **Mohamed Mahmoud (Current)** | **Data Extraction (Backend)** | `Member 1 — Data Extraction/`: extraction code, configuration, raw JSON data, and automated tests | **Implemented** |
+| **Seif Moataz** | Data Cleaning & Transformation | Pandas cleansing, outlier treatment, missing value imputation | **Planned** |
+| **Youssef Ali** | Database Design & Ingestion | PostgreSQL schema, DDL scripts, batch ingestion engine | **Planned** |
+| **Bedeir Abdelhamid** | Advanced SQL & Analytics | Aggregations, monthly metrics, temperature anomalies | **Planned** |
+| **Mohamed Mosad** | Workflow Orchestration | Apache Airflow DAGs, automated scheduling, SLA alerting | **Planned** |
+| **Ibrahim Mohamed** | Containerization & DevOps | Docker Compose, environment management, CI/CD pipeline | **Planned** |
 
 ---
 
@@ -31,7 +31,7 @@ flowchart TD
         API["Open-Meteo Historical Archive API<br/>(Historical Weather Data)"]
     end
 
-    subgraph Member1 ["Member 1: Data Extraction Layer"]
+    subgraph Member1 ["Mohamed Mahmoud: Data Extraction Layer"]
         CFG["config.py<br/>Coordinates & Dynamic Date Window"] --> ENGINE["extract_weather.py<br/>Extraction Engine"]
         API -->|HTTP GET / JSON| SESS["requests.Session<br/>+ Exponential Backoff & Retry-After"]
         SESS --> ENGINE
@@ -44,8 +44,8 @@ flowchart TD
     end
 
     subgraph Downstream ["Downstream Pipeline"]
-        RAW --> M2["Member 2: Pandas Data Cleaning"]
-        M2 --> M3["Member 3: PostgreSQL Ingestion"]
+        RAW --> M2["Seif Moataz: Pandas Data Cleaning"]
+        M2 --> M3["Youssef Ali: PostgreSQL Ingestion"]
     end
 ```
 
@@ -156,7 +156,7 @@ All tests run completely offline using `pytest` and mock objects (`unittest.mock
 
 ### Run the full test suite
 
-From the repository root, enter the Member 1 directory:
+From the repository root, enter the extraction directory:
 
 ```bash
 cd "Member 1 — Data Extraction"
@@ -188,7 +188,7 @@ pytest -v tests/test_storage.py
 
 ## 📜 Data Contract & Downstream Handover
 
-Downstream consumers (**Member 2** and **Member 3**) should review [`data_contract.md`](./data_contract.md) for detailed specifications on:
+Downstream consumers (**Seif Moataz** and **Youssef Ali**) should review [`data_contract.md`](./data_contract.md) for detailed specifications on:
 
 - Envelope metadata schema (`metadata`)
 - Hourly array types and physical units
